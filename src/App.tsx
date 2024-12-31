@@ -6,8 +6,9 @@ import { MapPage } from './pages/Map/MapPage';
 import { ActivityPage } from './pages/Activity/ActivityPage';
 import { RelationshipsPage } from './pages/Relationships/RelationshipsPage';
 import { SearchPage } from './pages/Search/SearchPage';
+import { DevicesPage } from './pages/Devices/DevicesPage';
 
-function App() {
+export function App() {
   return (
     <BrowserRouter>
       <PageLayout>
@@ -17,6 +18,7 @@ function App() {
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/relationships" element={<RelationshipsPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/devices" element={<DevicesPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </PageLayout>

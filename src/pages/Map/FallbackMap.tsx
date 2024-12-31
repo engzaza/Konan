@@ -5,14 +5,20 @@ import { Location } from '../../types';
 interface FallbackMapProps {
   locations: Location[];
   selectedLocation: string | null;
+  errorMessage?: string;
 }
 
-export function FallbackMap({ locations, selectedLocation }: FallbackMapProps) {
+export function FallbackMap({ locations, selectedLocation, errorMessage }: FallbackMapProps) {
   return (
     <div className="h-[calc(100vh-16rem)] p-6 flex flex-col items-center justify-center">
       <div className="max-w-md text-center">
         <MapPin className="w-12 h-12 text-blue-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Location Overview</h3>
+        {errorMessage && (
+          <p className="text-red-600 mb-4">
+            {errorMessage}
+          </p>
+        )}
         <p className="text-gray-600 mb-6">
           Showing {locations.length} locations in your history
         </p>

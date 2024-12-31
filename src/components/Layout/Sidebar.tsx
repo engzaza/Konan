@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Map, Clock, Users, Search } from 'lucide-react';
+import { LayoutDashboard, Map, Clock, Users, Search, Smartphone } from 'lucide-react';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -8,6 +8,7 @@ const navItems = [
   { icon: Clock, label: 'Activity Log', path: '/activity' },
   { icon: Users, label: 'Relationships', path: '/relationships' },
   { icon: Search, label: 'Smart Search', path: '/search' },
+  { icon: Smartphone, label: 'Linked Devices', path: '/devices' }
 ];
 
 export function Sidebar() {

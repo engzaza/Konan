@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Search, MapPin } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { mockLocations } from '../../data/mockData';
 import { LocationList } from './LocationList';
 import { FallbackMap } from './FallbackMap';
@@ -15,11 +15,20 @@ export function MapPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [mapError, setMapError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
     if (!mapContainer.current) return;
 
     try {
+      // Check for WebGL support
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      
+      if (!gl) {
+        throw new Error('WebGL is not supported in your browser');
+      }
+
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/light-v11',
@@ -29,28 +38,37 @@ export function MapPage() {
 
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-      mockLocations.forEach(location => {
-        const marker = new mapboxgl.Marker()
-          .setLngLat([location.longitude, location.latitude])
-          .setPopup(
-            new mapboxgl.Popup({ offset: 25 })
-              .setHTML(`
-                <h3 class="font-semibold">${location.name}</h3>
-                <p class="text-sm text-gray-600">${location.date}</p>
-                <p class="text-sm">${location.description}</p>
-              `)
-          )
-          .addTo(map.current!);
+      // Add markers only after the map has loaded
+      map.current.on('load', () => {
+        mockLocations.forEach(location => {
+          const marker = new mapboxgl.Marker()
+            .setLngLat([location.longitude, location.latitude])
+            .setPopup(
+              new mapboxgl.Popup({ offset: 25 })
+                .setHTML(`
+                  <h3 class="font-semibold">${location.name}</h3>
+                  <p class="text-sm text-gray-600">${location.date}</p>
+                  <p class="text-sm">${location.description}</p>
+                `)
+            )
+            .addTo(map.current!);
 
-        if (location.id === selectedLocation) {
-          marker.togglePopup();
-        }
+          if (location.id === selectedLocation) {
+            marker.togglePopup();
+          }
+        });
       });
 
-      return () => map.current?.remove();
+      return () => {
+        if (map.current) {
+          map.current.remove();
+          map.current = null;
+        }
+      };
     } catch (error) {
-      console.warn('Map initialization failed, falling back to static view');
+      console.warn('Map initialization failed:', error);
       setMapError(true);
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to initialize map');
     }
   }, [selectedLocation]);
 
@@ -69,7 +87,11 @@ export function MapPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-200 overflow-hidden">
           {mapError ? (
-            <FallbackMap locations={filteredLocations} selectedLocation={selectedLocation} />
+            <FallbackMap 
+              locations={filteredLocations} 
+              selectedLocation={selectedLocation} 
+              errorMessage={errorMessage}
+            />
           ) : (
             <div ref={mapContainer} className="h-[calc(100vh-16rem)]" />
           )}
