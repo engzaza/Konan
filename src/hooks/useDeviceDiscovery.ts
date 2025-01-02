@@ -36,10 +36,15 @@ export function useDeviceDiscovery() {
     }
   }, []);
 
+  const stopScan = () => {
+    setIsScanning(false);
+  };
+
   return {
     isScanning,
     discoveredDevices,
     error,
     startScan,
+    stopScan,
   };
 }
