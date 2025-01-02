@@ -1,0 +1,4 @@
+interface Navigator {
+    bluetooth: Bluetooth;
+  }
+  

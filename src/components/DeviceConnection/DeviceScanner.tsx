@@ -1,34 +1,28 @@
-import React, { useState } from 'react';
-import { Scan, Loader } from 'lucide-react';
+import React from 'react';
+import { useDeviceDiscovery } from '../../hooks/useDeviceDiscovery';
 
 export function DeviceScanner() {
-  const [isScanning, setIsScanning] = useState(false);
-
-  const startScan = () => {
-    setIsScanning(true);
-    // Simulate scanning for 2 seconds
-    setTimeout(() => setIsScanning(false), 2000);
-  };
+  const { isScanning, discoveredDevices, error, startScan } = useDeviceDiscovery();
 
   return (
-    <div className="fixed bottom-4 right-4">
+    <div className="device-scanner">
       <button
         onClick={startScan}
         disabled={isScanning}
-        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg transition-colors"
+        className="btn btn-primary"
       >
-        {isScanning ? (
-          <>
-            <Loader className="w-5 h-5 animate-spin" />
-            <span>Scanning...</span>
-          </>
-        ) : (
-          <>
-            <Scan className="w-5 h-5" />
-            <span>Scan for Devices</span>
-          </>
-        )}
+        {isScanning ? 'Scanning...' : 'Scan for Devices'}
       </button>
+
+      {error && <div className="error">{error}</div>}
+
+      <ul className="device-list">
+        {discoveredDevices.map((device) => (
+          <li key={device.id}>
+            {device.name} - Last Sync: {device.lastSync}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
