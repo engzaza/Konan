@@ -8,7 +8,7 @@ import { Device } from '../../types/device';
 const deviceIcons = {
   smartphone: Smartphone,
   laptop: Laptop,
-  tablet: Laptop
+  tablet: Laptop // Ensure you use a unique icon if needed (e.g., Tablet from lucide-react)
 };
 
 export function DeviceScanner() {
@@ -18,7 +18,7 @@ export function DeviceScanner() {
   const handleConnect = async (device: Device) => {
     const success = await connect(device);
     if (success) {
-      stopScan();
+      stopScan(); // Ensure stopScan is part of the hook and implemented
     }
   };
 
@@ -58,7 +58,7 @@ export function DeviceScanner() {
       {discoveredDevices.length > 0 && (
         <div className="space-y-2">
           {discoveredDevices.map(device => {
-            const Icon = deviceIcons[device.type];
+            const Icon = deviceIcons[device.type] || Smartphone; // Fallback to smartphone if icon not found
             return (
               <button
                 key={device.id}
